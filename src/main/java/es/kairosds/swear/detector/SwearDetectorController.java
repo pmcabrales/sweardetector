@@ -16,13 +16,13 @@ public class SwearDetectorController {
 	List<String> words = Arrays.asList("cantamañanas", "lechuguino", "abrazafarolas");
 	
 	@PostMapping("/swear")
-	ResponseEntity<String> containsSwearWords(@RequestBody String comment) {
+	ResponseEntity<Boolean> hasSwearWords(@RequestBody String comment) {
 		
 		boolean res = words.parallelStream()
 						.map(String::toUpperCase)
 						.anyMatch(word -> comment.toUpperCase().contains(word));
 		
-		return res ? new ResponseEntity<>(HttpStatus.BAD_REQUEST) : new ResponseEntity<>(HttpStatus.ACCEPTED);
+		return res ? new ResponseEntity<>(true,HttpStatus.BAD_REQUEST) : new ResponseEntity<>(false,HttpStatus.ACCEPTED);
 	
 	}
 }
