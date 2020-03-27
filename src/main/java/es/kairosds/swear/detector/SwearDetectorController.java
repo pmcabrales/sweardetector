@@ -18,9 +18,10 @@ public class SwearDetectorController {
 	@PostMapping("/swear")
 	ResponseEntity<Boolean> hasSwearWords(@RequestBody String comment) {
 		
-		boolean res = words.parallelStream()
-						.map(String::toUpperCase)
-						.anyMatch(word -> comment.toUpperCase().contains(word));
+		boolean res = (comment==null) || 
+						words.parallelStream()
+							.map(String::toUpperCase)
+							.anyMatch(word -> comment.toUpperCase().contains(word));
 		
 		return res ? new ResponseEntity<>(true,HttpStatus.BAD_REQUEST) : new ResponseEntity<>(false,HttpStatus.ACCEPTED);
 	

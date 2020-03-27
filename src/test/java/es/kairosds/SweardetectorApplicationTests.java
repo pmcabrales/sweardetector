@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class SweardetectorApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void main() {
+		SweardetectorApplication.main(new String[] {});
 	}
-
 }

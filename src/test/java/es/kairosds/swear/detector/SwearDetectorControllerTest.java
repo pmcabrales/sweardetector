@@ -1,53 +1,54 @@
 package es.kairosds.swear.detector;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(SwearDetectorController.class)
 public class SwearDetectorControllerTest {
 
-	@Autowired
-	private MockMvc mockMvc;
+	private SwearDetectorController swearDetectorControllerSUT;
+	private String swearComment;
+	private String politeComment;
+	
+	@Before
+    public void init() {
+		swearDetectorControllerSUT = new SwearDetectorController();
+		politeComment = "El tigre comía trigo en el trigal";
+		swearComment = "El tigre comía lechuguino en el trigal";
+    }
+
 	
 	@Test
-	public void hasSwearWords_without_swear_word_in_comment() throws Exception {
-		
-		String comment = "El tigre comía trigo en el trigal";
-		
-		RequestBuilder request = MockMvcRequestBuilders
-				.post("/swear")
-				.content(comment)
-				.accept(MediaType.APPLICATION_JSON);
-		
-		mockMvc.perform(request)
-				.andExpect(status().isAccepted())
-				.andReturn();
+    public void noSwearWords() {
 
-	}
+        ResponseEntity<Boolean> response = swearDetectorControllerSUT.hasSwearWords(politeComment);
+
+        assertThat(response.getBody(), is(false));
+    }
 	
 	@Test
-	public void hasSwearWords_with_swear_word_in_comment() throws Exception {
-		
-		String comment = "El tigre comía lechuguino en el trigal";
-		
-		RequestBuilder request = MockMvcRequestBuilders
-				.post("/swear")
-				.content(comment)
-				.accept(MediaType.APPLICATION_JSON);
-		
-		mockMvc.perform(request)
-				.andExpect(status().isBadRequest())
-				.andReturn();
+    public void swearWords() {
 
-	}
+        ResponseEntity<Boolean> response = swearDetectorControllerSUT.hasSwearWords(swearComment);
+
+        assertThat(response.getBody(), is(true));
+    }
+	
+	@Test
+    public void nullComment() {
+
+        ResponseEntity<Boolean> response = swearDetectorControllerSUT.hasSwearWords(null);
+
+        assertThat(response.getBody(), is(true));
+    }
+
+
 }
